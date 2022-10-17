@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Aplicativo para vendas/appvendas/app/src/main/res/layout/activity_produtos.xml" value="0.19972826086956522" />
+        <entry key="..\:/Aplicativo para vendas/appvendas/app/src/main/res/layout/adapter_produtos.xml" value="0.33" />
+        <entry key="..\:/Aplicativo para vendas/appvendas/app/src/main/res/menu/busca.xml" value="0.20416666666666666" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas.BOM/app/src/main/res/layout/activity_produtos.xml" value="0.20416666666666666" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/drawable/botao_adicionar_selecionados.xml" value="0.2105" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/drawable/textviews_produtos.xml" value="0.1795" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/layout/activity_produtos.xml" value="0.20416666666666666" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/layout/adapter_produtos.xml" value="0.5" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/menu/busca.xml" value="0.20416666666666666" />
+        <entry key="..\:/COBIAN/BACKUP appVendas/appvendas/app/src/main/res/menu/button_add_checkeds.xml" value="0.20416666666666666" />
+        <entry key="..\:/COBIAN/appvendas/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/COBIAN/appvendas/app/src/main/res/layout/adapter_produtos.xml" value="0.5" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
