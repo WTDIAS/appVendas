@@ -4,9 +4,9 @@
     package="com.gigalike.appvendas">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:theme="@style/Theme.MaterialComponents.NoActionBar"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,15 +14,25 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:theme="@style/Theme.MaterialComponents.NoActionBar"
         tools:targetApi="31">
-        <!--A LINHA ABAIXO SUBSTITUIU A LINHA: android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
-        <!--PARA NÃO EXIBIR A BARRA PADRAO DO SISTEMA E SIM A MINHA TOOLBAR-->
-        <!--android:theme="@style/Theme.AppVendas"-->
         <activity
-            android:name=".ProdutosActivity"
+            android:name=".ActivityLinhaCidade"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ActivityCidades"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityClientes"
+            android:exported="false" /> <!-- A LINHA ABAIXO SUBSTITUIU A LINHA: android:theme="@style/Theme.AppCompat.Light.NoActionBar" -->
+        <!-- PARA NÃO EXIBIR A BARRA PADRAO DO SISTEMA E SIM A MINHA TOOLBAR -->
+        <!-- android:theme="@style/Theme.AppVendas" -->
+        <activity
+            android:name=".ActivityProdutos"
+            android:exported="false"
+            android:label="" />
+        <activity
+            android:name=".ActivityMain"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

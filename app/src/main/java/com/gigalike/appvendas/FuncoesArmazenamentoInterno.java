@@ -1,22 +1,22 @@
 package com.gigalike.appvendas;
 
 import static android.content.Context.MODE_PRIVATE;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
+import com.google.gson.Gson;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+
 
 public class FuncoesArmazenamentoInterno {
-    private final String nomeArquivoProdutos = "appVendasProdutos.txt";
+    InputStreamReader inputStreamReader = null;
+    private final String nomeArquivoProdutos = "appVendasProdutos";
     private final String nomeSharPrefUltimaAtualizacao = "appVendasDataATualiazacao";
+    private final String nomeSharPrefDadosCliente = "dadosCliente";
+
+    //Gson é uma ferramenta feito importação via build.grandle para trabalhar com Json
+    private Gson gson = new Gson();
 
     //PROPRIEDADE nomeArquivoProdutos
     public String getNomeArquivoProdutos() {
@@ -30,12 +30,13 @@ public class FuncoesArmazenamentoInterno {
     public FuncoesArmazenamentoInterno() {}
 
 
-    public void salvarProdutosNoArmazenamentoInterno(String produtoDadosJson, Context context){
+
+/*    public void excluirArquivoArmazenamentoInterno(Context context) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(this.nomeArquivoProdutos,Context.MODE_APPEND));
-            outputStreamWriter.write(produtoDadosJson);
-            outputStreamWriter.write("\n");
-            outputStreamWriter.close();
+            File dir = context.getFilesDir();
+            File file = new File(dir, this.getNomeArquivoProdutos());
+            file.delete();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,16 +44,28 @@ public class FuncoesArmazenamentoInterno {
 
 
     public boolean jaExisteArquivoProdutos(Context context, String nomeArquivo){
-        File file = context.getFileStreamPath(nomeArquivoProdutos);
+        File file = context.getFileStreamPath(nomeArquivo);
         return file.exists();
-    }
+    }*/
 
 
-    public ArrayList<ProdutoModel> obterArrayDeProdutos(Context context) {
-        String resultado = "";
-        ProdutoModel produtoModel;
-        String[] temp;
-        ArrayList<ProdutoModel> arrayListProdutoModel = new ArrayList<ProdutoModel>();
+    /*public void salvarProdutosNoArmazenamentoInterno(ArrayList<ModelProduto>arrayListProdutos, Context context){
+        try {for (ModelProduto modelProduto :arrayListProdutos) {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(this.nomeArquivoProdutos,Context.MODE_APPEND));
+                outputStreamWriter.write(gson.toJson(modelProduto));
+                outputStreamWriter.write("\n");
+                outputStreamWriter.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+
+/*    public ArrayList<ModelProduto> leituraDeProdutosDoArmazenamentoInterno(Context context) {
+        ModelProduto modelProduto;
+        ArrayList<ModelProduto> arrayListModelProduto = new ArrayList<ModelProduto>();
         try {
             //abrir arquivo
             File file = context.getFileStreamPath(nomeArquivoProdutos);
@@ -60,46 +73,59 @@ public class FuncoesArmazenamentoInterno {
                 InputStream arquivo = context.openFileInput(nomeArquivoProdutos);
                 if (arquivo != null) {
                     //ler arquivo
-                    InputStreamReader inputStreamReader = new InputStreamReader(arquivo);
+                    inputStreamReader = new InputStreamReader(arquivo);
                     //gerar buffer
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                     //recuperar textos
                     String linhaArquivo = "";
                     while ((linhaArquivo = bufferedReader.readLine()) != null) {
-                        JSONObject produtoJsonObject = new JSONObject(linhaArquivo);
-                        produtoModel = FuncoesCompartilhadas.gerarProdutoModel(produtoJsonObject);
-                        arrayListProdutoModel.add(produtoModel);
+                        modelProduto = gson.fromJson(linhaArquivo, ModelProduto.class);
+                        arrayListModelProduto.add(modelProduto);
                     }
                     arquivo.close();
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return arrayListProdutoModel;
-    }//public ArrayList<ProdutoModel> obterArrayDeProdutos
+        return arrayListModelProduto;
+    }//public ArrayList<ProdutoModel> obterArrayDeProdutos*/
 
 
 
+    //Esta função faz a leitura do arquivo json cidadesJson.json que coloquei
+    //na pasta assets que eu criei. Ele contém todas cidades, Unidade Federativa e codigo IBGE do Brasil
+    public String lerCidadesJson(Context context, String fileName) {
+        String jsonString;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            jsonString = new String(buffer, "UTF-8");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return jsonString;
+    }
 
 
 
 
     public void sharedPrefSalvar(String sharPrefChave, String sharPrefValor, Context context){
-        if (!sharPrefExiste(sharPrefChave,context)){
-            SharedPreferences sharedPreferences = context.getSharedPreferences(sharPrefChave,MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(sharPrefChave,sharPrefValor);
-            editor.apply();
-        }
-    }
-
-
-    public boolean sharPrefExiste(String sharPrefChave, Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(sharPrefChave,MODE_PRIVATE);
-        return sharedPreferences.contains(sharPrefChave);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(sharPrefChave,sharPrefValor);
+        editor.apply();
     }
+
+
 
 
     public String sharPrefLeitura(String sharPrefChave,Context context){
@@ -116,6 +142,39 @@ public class FuncoesArmazenamentoInterno {
     }
 
 
+
+
+    public boolean sharPrefExiste(String sharPrefChave, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(sharPrefChave,MODE_PRIVATE);
+        return sharedPreferences.contains(sharPrefChave);
+    }
+
+
+
+
+    public void salvarDadosClienteNoArmazenamentoInterno(ModelCliente clienteModel, Activity activity){
+        try {
+                String jsonClienteDados = gson.toJson(clienteModel);
+                sharedPrefSalvar(nomeSharPrefDadosCliente,jsonClienteDados,activity);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public ModelCliente leituraDadosClienteDoArmazenamentoInterno(Activity activity) {
+        ModelCliente clienteModel = new ModelCliente();
+        try {
+                String strRegistro = sharPrefLeitura(nomeSharPrefDadosCliente,activity);
+                clienteModel = gson.fromJson(strRegistro, ModelCliente.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return clienteModel;
+    }
 
 
 

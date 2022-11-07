@@ -3,7 +3,7 @@ package com.gigalike.appvendas;
 import java.util.ArrayList;
 
 public class MinhasInterfaces {
-    public  interface QuandoApiRespondeTodosrProdutos{
-        void retornoApiTodosProdutos(ArrayList<ProdutoModel> arrayListProdutos);
+    public  interface QuandoApiRetornarTodosrProdutos{
+        void retornoApiTodosProdutos(ArrayList<ModelProduto> arrayListProdutos);
     }
 }

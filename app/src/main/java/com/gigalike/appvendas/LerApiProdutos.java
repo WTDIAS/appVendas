@@ -1,15 +1,13 @@
 package com.gigalike.appvendas;
 
 import android.app.Activity;
-import android.view.View;
-import android.widget.ProgressBar;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,19 +15,20 @@ import java.util.ArrayList;
 
 
 public class LerApiProdutos {
-    private ArrayList<ProdutoModel>produtoModelList = new ArrayList<>();
-    private ProdutoModel produtoModel = null;
+    private ArrayList<ModelProduto> modelProdutoList = new ArrayList<>();
+    private ModelProduto modelProduto = null;
     private RequestQueue mQueue;
     public Activity activity;
     private JSONObject jsonObjectResponse = null;
     private JSONObject jsonObjectProdutoDados = new JSONObject();
+    private Gson gson = new Gson();
 
     //CONSTRUTOR
     public LerApiProdutos(Activity _activity){
         this.activity = _activity;
     }
 
-    public void lerTodosProdutos(String url){
+    public void lerTodosProdutos(String url,MinhasInterfaces.QuandoApiRetornarTodosrProdutos quandoApiRetornarTodosrProdutos){
         mQueue = Volley.newRequestQueue(activity);
         FuncoesArmazenamentoInterno funcoesArmazenamentoInterno = new FuncoesArmazenamentoInterno();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -45,20 +44,15 @@ public class LerApiProdutos {
                                     jsonObjectResponse = new JSONObject(strResponse);
                                     //Obtenho somente os dados do produto em formato json que esta em produto_dados
                                     jsonObjectProdutoDados = jsonObjectResponse.getJSONObject("produto_dados");
-                                    //Abaixo é salvo no armazenamento interno do smartphone os produtos para futuras consultas aos produtos
-                                    //utilizando a consulta da API somente quando for necessario.
-                                    funcoesArmazenamentoInterno.salvarProdutosNoArmazenamentoInterno(jsonObjectProdutoDados.toString(),activity);
-                                    //Abaixo a funcao gerarProdutoModel devolve um produtoModel preenchido com dados passados em jsonObjectProdutoDados
-                                    produtoModel = FuncoesCompartilhadas.gerarProdutoModel(jsonObjectProdutoDados);
-                                    produtoModelList.add(produtoModel);
+                                    //ABAIXO TRANSFORMO DE OBJETO JSON PARA ProdutoModel
+                                    modelProduto = gson.fromJson(String.valueOf(jsonObjectProdutoDados), ModelProduto.class);
+                                    modelProdutoList.add(modelProduto);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            //Devido ao fato deste método ser assincrono, ele estava retornando objeto vazio pois somente quando
-                            //a API responde é que ele executa este onResponse. Então criei o exibirProdutosNaTela que será chamado
-                            //somente quando executar este metodo.
-                            FuncoesCompartilhadas.exibirProdutosNaTela(produtoModelList,activity);
+                            //ABAIXO SERÁ RETORNADO A LISTA DE PRODUTOS PARA O MÉTODO UTILIZANDO A INTERFACE QUE CHAMOU.
+                            quandoApiRetornarTodosrProdutos.retornoApiTodosProdutos(modelProdutoList);
                         }
                     }
                 }, new Response.ErrorListener() {
