@@ -25,7 +25,7 @@ public class ActivityProdutos extends AppCompatActivity {
     //public Activity activity;
     private ProdutosSqlite produtosSqlite = new ProdutosSqlite(ActivityProdutos.this);
     private FuncoesArmazenamentoInterno funcoesArmazenamentoInterno = new FuncoesArmazenamentoInterno();
-    LerApiProdutos lerApiProdutos = new LerApiProdutos(ActivityProdutos.this);
+    TransacoesApiProdutos transacoesApiProdutos = new TransacoesApiProdutos(ActivityProdutos.this);
     private ArrayList<ModelProduto> arrayListModelProduto = new ArrayList<>();
     private ProgressBar myProgressBar;
     private AdapterProdutos adapterProdutos = new AdapterProdutos();
@@ -69,7 +69,7 @@ public class ActivityProdutos extends AppCompatActivity {
             if (arrayListModelProduto.size() > 0) {
                 FuncoesCompartilhadas.exibirProdutosNaTela(arrayListModelProduto, ActivityProdutos.this);
             }else {
-                lerApiProdutos.lerTodosProdutos(url, new MinhasInterfaces.QuandoApiRetornarTodosrProdutos() {
+                transacoesApiProdutos.lerTodosProdutos(url, new MinhasInterfaces.QuandoApiRetornarTodosrProdutos() {
                     //ACIMA É UTILIZADO COMO PARÂMETRO UMA INTERFACE, DESTA FORMA ELA SÓ É EXECUTADA QUANDO OUVER O RETORNO
                     //DO MÉTODO QUE A IMPLEMENTA
                     @Override
@@ -84,7 +84,7 @@ public class ActivityProdutos extends AppCompatActivity {
             }
         }else{
             //SE A DATA DA ULTIMA ATUALIZACAO NÃO FOR IGUAL A DATA ATUAL CARREGO DA API
-            lerApiProdutos.lerTodosProdutos(url, new MinhasInterfaces.QuandoApiRetornarTodosrProdutos() {
+            transacoesApiProdutos.lerTodosProdutos(url, new MinhasInterfaces.QuandoApiRetornarTodosrProdutos() {
                 //ACIMA É UTILIZADO COMO PARÂMETRO UMA INTERFACE, DESTA FORMA ELA SÓ É EXECUTADA QUANDO OUVER O RETORNO
                 //DO MÉTODO QUE A IMPLEMENTA
                 @Override
@@ -168,7 +168,7 @@ public class ActivityProdutos extends AppCompatActivity {
         adapterProdutos.notifyDataSetChanged();
         //MOSTRANDO A PROGRESSBAR
         myProgressBar.setVisibility(View.VISIBLE);
-        lerApiProdutos.lerTodosProdutos(url, new MinhasInterfaces.QuandoApiRetornarTodosrProdutos() {
+        transacoesApiProdutos.lerTodosProdutos(url, new MinhasInterfaces.QuandoApiRetornarTodosrProdutos() {
             //ACIMA É UTILIZADO COMO PARÂMETRO UMA INTERFACE, DESTA FORMA ELA SÓ É EXECUTADA QUANDO OUVER O RETORNO
             //DO MÉTODO QUE A IMPLEMENTA
             @Override

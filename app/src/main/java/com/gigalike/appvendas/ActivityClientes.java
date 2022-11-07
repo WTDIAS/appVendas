@@ -1,5 +1,6 @@
 package com.gigalike.appvendas;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,17 +13,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class ActivityClientes extends AppCompatActivity {
     FuncoesArmazenamentoInterno funcoesArmazenamentoInterno = new FuncoesArmazenamentoInterno();
     boolean statusCampos = true;
-    ModelCidade cidadeSelecionada  = new ModelCidade();;
+    ModelCidade cidadeSelecionada = new ModelCidade();
+    ;
 
     EditText editTextNome = null;
     EditText editTextCpfCnpj = null;
@@ -52,18 +56,18 @@ public class ActivityClientes extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.menu_clientes_activity);
 
-        editTextNome = (EditText)findViewById(R.id.editTextNome);
-        editTextCpfCnpj = (EditText)findViewById(R.id.editTextCpfCnpj);
-        editTextTelefone = (EditText)findViewById(R.id.editTextTelefone);
-        editTextLogradouro = (EditText)findViewById(R.id.editTextLogradouro);
-        editTextNumero = (EditText)findViewById(R.id.editTextNumero);
-        editTextBairro = (EditText)findViewById(R.id.editTextBairro);
-        editTextComplemento = (EditText)findViewById(R.id.editTextComplemento);
+        editTextNome = (EditText) findViewById(R.id.editTextNome);
+        editTextCpfCnpj = (EditText) findViewById(R.id.editTextCpfCnpj);
+        editTextTelefone = (EditText) findViewById(R.id.editTextTelefone);
+        editTextLogradouro = (EditText) findViewById(R.id.editTextLogradouro);
+        editTextNumero = (EditText) findViewById(R.id.editTextNumero);
+        editTextBairro = (EditText) findViewById(R.id.editTextBairro);
+        editTextComplemento = (EditText) findViewById(R.id.editTextComplemento);
         textViewCidade = (EditText) findViewById(R.id.textViewCidade);
-        editTextCep = (EditText)findViewById(R.id.editTextCep);
-        textViewUf = (EditText)findViewById(R.id.editTextUf);
-        editTextEmail = (EditText)findViewById(R.id.editTextEmail);
-        editTextObservacao = (EditText)findViewById(R.id.editTextObservacao);
+        editTextCep = (EditText) findViewById(R.id.editTextCep);
+        textViewUf = (EditText) findViewById(R.id.editTextUf);
+        editTextEmail = (EditText) findViewById(R.id.editTextEmail);
+        editTextObservacao = (EditText) findViewById(R.id.editTextObservacao);
 
         btnCidade = findViewById(R.id.btnCidade);
         btnSalvar = findViewById(R.id.btnSalvar);
@@ -83,6 +87,14 @@ public class ActivityClientes extends AppCompatActivity {
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ClientesSqlite clientesSqlite = new ClientesSqlite();
+
+                //Leitura dos dados da tele fornecidos pelo usuario
+                ModelCliente modelCliente = gerarModelClienteComDadosDaTela();
+                if (verificaCamposObrigatórios()) {
+                    //Chamando a classe para salva no banco de dados local SQLite
+                    clientesSqlite.salvarCliente(modelCliente);
+                }
 
             }
         });
@@ -108,7 +120,7 @@ public class ActivityClientes extends AppCompatActivity {
         //Abaixo estou pegando os dados da cidade após a selecão da mesma na activity cidade
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        if (bundle != null){
+        if (bundle != null) {
             cidadeSelecionada.setNomeCidade((String) bundle.get("cidadeExtra"));
             cidadeSelecionada.setCodigoIBGE((String) bundle.get("codIbgeExtra"));
             cidadeSelecionada.setUnidadeFederativa((String) bundle.get("ufExtra"));
@@ -125,7 +137,8 @@ public class ActivityClientes extends AppCompatActivity {
         if (TextUtils.isEmpty(json)) {
             return null;
         }
-        Type type = new TypeToken<ArrayList<JsonObject>>() {}.getType();
+        Type type = new TypeToken<ArrayList<JsonObject>>() {
+        }.getType();
         ArrayList<JsonObject> jsonObjects = new Gson().fromJson(json, type);
 
         ArrayList<T> arrayList = new ArrayList<>();
@@ -136,10 +149,9 @@ public class ActivityClientes extends AppCompatActivity {
     }
 
 
-
     //Função abaixo ativa e desativa os campos para edição, exceto CPF/CNPJ
-    public void ativaInativaCampos(){
-        if (statusCampos){
+    public void ativaInativaCampos() {
+        if (statusCampos) {
             editTextNome.setEnabled(false);
             editTextCpfCnpj.setEnabled(false);
             editTextTelefone.setEnabled(false);
@@ -151,7 +163,7 @@ public class ActivityClientes extends AppCompatActivity {
             editTextEmail.setEnabled(false);
             editTextObservacao.setEnabled(false);
             statusCampos = false;
-        }else {
+        } else {
             editTextNome.setEnabled(true);
             editTextCpfCnpj.setEnabled(true);
             editTextTelefone.setEnabled(true);
@@ -168,9 +180,60 @@ public class ActivityClientes extends AppCompatActivity {
 
     //Ao sair da tela para selecionar a cidade esta função salva os dados ja preenchidos no
     // armazenamento interno para não perde-las para em seguida reexibilas
-    public void salvarDadosClienteDaTelaNoArmazenamentoInterno(){
-        ModelCliente clienteModel = new ModelCliente();
+    public void salvarDadosClienteDaTelaNoArmazenamentoInterno() {
+        ModelCliente modelCliente = gerarModelClienteComDadosDaTela();
+        funcoesArmazenamentoInterno.salvarDadosClienteNoArmazenamentoInterno(modelCliente, ActivityClientes.this);
+    }
 
+    //Metodo abaixo verifica que foi digitado algo nos campos obrigatórios, senão exibe ícone de exclamação
+    public boolean verificaCamposObrigatórios() {
+        boolean retorno = false;
+        if (TextUtils.isEmpty(editTextNome.getText())) {
+            editTextNome.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(editTextCpfCnpj.getText())) {
+            editTextCpfCnpj.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(editTextLogradouro.getText())) {
+            editTextLogradouro.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(editTextNumero.getText())) {
+            editTextNumero.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(editTextBairro.getText())) {
+            editTextBairro.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(textViewCidade.getText())) {
+            textViewCidade.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(editTextCep.getText())) {
+            editTextCep.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        if (TextUtils.isEmpty(textViewUf.getText())) {
+            textViewUf.setError("Campo obrigatório");
+            retorno = true;
+        }
+
+        return retorno;
+    }//public boolean verificaCamposObrigatórios
+
+
+    public ModelCliente gerarModelClienteComDadosDaTela() {
+        ModelCliente clienteModel = new ModelCliente();
         clienteModel.setNome(editTextNome.getText().toString());
         clienteModel.setCpfCnpj(editTextCpfCnpj.getText().toString());
         clienteModel.setTelefone(editTextTelefone.getText().toString());
@@ -187,15 +250,13 @@ public class ActivityClientes extends AppCompatActivity {
         clienteModel.setNomeCidade(cidadeSelecionada.getNomeCidade());
         clienteModel.setUnidadeFederativa(cidadeSelecionada.getUnidadeFederativa());
         clienteModel.setCodigoIBGE(cidadeSelecionada.getCodigoIBGE());
-
-        funcoesArmazenamentoInterno.salvarDadosClienteNoArmazenamentoInterno(clienteModel, ActivityClientes.this);
-
+        return clienteModel;
     }
 
 
     //Após sair da tela de clientes para selecionar a cidade salvei os dados no armazenamento
     // interno, após buscar os dados novamente em um clienteModel passo para função abaixo que reexibe.
-    public void reesibirDadosDoClienteNaTela(ModelCliente clienteModel){
+    public void reesibirDadosDoClienteNaTela(ModelCliente clienteModel) {
         editTextNome.setText(clienteModel.getNome());
         editTextCpfCnpj.setText(clienteModel.getCpfCnpj());
         editTextTelefone.setText(clienteModel.getTelefone());
@@ -209,11 +270,9 @@ public class ActivityClientes extends AppCompatActivity {
     }
 
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_clientes_activity,menu);
+        getMenuInflater().inflate(R.menu.menu_clientes_activity, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -221,9 +280,6 @@ public class ActivityClientes extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
 
 }

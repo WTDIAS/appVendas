@@ -10,6 +10,8 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +27,6 @@ public class ActivityCidades extends AppCompatActivity {
         setContentView(R.layout.activity_cidades);
         searchView = (SearchView)findViewById(R.id.searchViewPesquisaCidade);
 
-        //Codigo abaixo é para o searchview ficar apenas maiúsculo
-        searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
 
         //Abaixo estou fazendo uma consulta por uma cidade específica apenas
         // para saber se já existe a tabela e as colunas criadas no SQLite
@@ -65,6 +65,7 @@ public class ActivityCidades extends AppCompatActivity {
                             FuncoesCompartilhadas.exibirCidadesNaTela(modelCidadeList, ActivityCidades.this);
                         }
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

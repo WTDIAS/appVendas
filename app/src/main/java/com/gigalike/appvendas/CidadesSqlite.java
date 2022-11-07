@@ -30,6 +30,7 @@ public class CidadesSqlite extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        //dropTableCidades();
         String query =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 COLUMN_PK_ID_CIDADE + " INTEGER PRIMARY KEY," +
@@ -41,7 +42,6 @@ public class CidadesSqlite extends SQLiteOpenHelper{
 
 
     public void inserirCidades(List<ModelCidade> modelCidadeList){
-        //dropTableCidades();
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();

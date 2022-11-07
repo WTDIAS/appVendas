@@ -17,7 +17,7 @@
         android:theme="@style/Theme.MaterialComponents.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".ActivityLinhaCidade"
+            android:name=".ActivityConsultaCliente"
             android:exported="false" />
         <activity
             android:name=".ActivityCidades"
